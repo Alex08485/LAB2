@@ -1,33 +1,33 @@
 name: C++ CI
 
-# Запускать при каждом push или pull request в ветки main/master
 on: [push, pull_request]
 
 jobs:
   build-and-test:
-    # Использовать последнюю версию Ubuntu
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Клонируем репозиторий (скачиваем код)
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 2. Устанавливаем зависимости (компилятор, cmake, gtest)
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y cmake g++ libgtest-dev
 
-    # 3. Конфигурируем CMake (как вы делали локально)
+    # ★ ДОБАВЬТЕ ЭТОТ ШАГ ★
+    - name: Clean previous builds
+      run: |
+        rm -rf build
+        rm -f CMakeCache.txt
+        rm -rf CMakeFiles
+
     - name: Configure CMake
       run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
-    # 4. Собираем проект
     - name: Build
       run: cmake --build build --parallel 2
 
-    # 5. Запускаем тесты
     - name: Run Tests
       run: |
         cd build
